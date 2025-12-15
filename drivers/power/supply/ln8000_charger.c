@@ -151,23 +151,21 @@ static int ln8000_update_reg(struct ln8000_info *info, u8 addr, u8 mask, u8 data
 	int i, ret;
 	u8 old_val, new_val;
 
-        for (i = 0; i < I2C_RETRY_CNT; ++i) {
+	for (i = 0; i < I2C_RETRY_CNT; ++i) {
 		ret = i2c_smbus_read_byte_data(info->client, addr);
-		if (ret < 0) {
-			ln_err("failed-update, reg(0x%02X), ret(%d)\n", addr, ret);
-		} else {
+		if (ret >= 0) {
 			old_val = ret & 0xff;
 			new_val = (data & mask) | (old_val & ~(mask));
-			ret = i2c_smbus_write_byte_data(info->client, addr,
-							new_val);
-			if (ret < 0) {
-				ln_err("failed-update, reg(0x%02X), ret(%d)\n",
-				       addr, ret);
-			} else {
-				break;
+
+			ret = i2c_smbus_write_byte_data(info->client, addr, new_val);
+			if (ret >= 0) {
+				return 0;
 			}
 		}
 	}
+	/* Log error after a few retries */
+	ln_err("failed-update, reg(0x%02X), ret(%d)\n", addr, ret);
+	
 	return ret;
 }
 
