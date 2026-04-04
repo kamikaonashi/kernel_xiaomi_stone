@@ -74,13 +74,13 @@ static int onewire_major;
 static int onewire_gpio_detected;
 static struct onewire_gpio_data *g_onewire_data;
 
-void Delay_us(unsigned int T)
+noinline void Delay_us(unsigned int T)
 {
 	udelay(T);
 }
 EXPORT_SYMBOL(Delay_us);
 
-void Delay_ns(unsigned int T)
+noinline void Delay_ns(unsigned int T)
 {
 	ndelay(T);
 }
